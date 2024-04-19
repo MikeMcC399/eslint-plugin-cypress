@@ -27,4 +27,5 @@ jobs:
       - name: Lint (ESLint)
         run: npm run lint
       - name: Test (Jest)
+        if: always() # run anyway
         run: npm test
