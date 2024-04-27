@@ -1,6 +1,5 @@
-# Prevent using async/await in Cypress test cases (no-async-tests)
-
-Cypress tests [that return a promise will error](https://docs.cypress.io/guides/references/error-messages.html#Cypress-detected-that-you-returned-a-promise-from-a-command-while-also-invoking-one-or-more-cy-commands-in-that-promise) and cannot run successfully. An `async` function returns a promise under the hood, so a test using an `async` function will also error.
+Cypress tests [that return a promise will error](https://docs.cypress.io/guides/references/error-messages.html#Cypress-detected-that-you-returned-a-promise-from-a-command-while-also-invoking-one-or-more-cy-commands-in-that-promise) and cannot run successfully.
+An `async` function returns a promise under the hood, so a test using an `async` function will also error.
 
 ## Rule Details
 
@@ -38,7 +37,6 @@ describe('my feature', () => {
     // other operations
   })
 })
-
 ```
 
 ## When Not To Use It

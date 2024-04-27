@@ -115,18 +115,8 @@ For more, see the [ESLint rules](https://eslint.org/docs/user-guide/configuring/
 
 These rules enforce some of the [best practices recommended for using Cypress](https://on.cypress.io/best-practices).
 
-Rules with a check mark (✅) are enabled by default while using the `plugin:cypress/recommended` config.
-
-|     | Rule ID                                                                    | Description                                                     |
-| :-- | :------------------------------------------------------------------------- | :-------------------------------------------------------------- |
-| ✅  | [no-assigning-return-values](./docs/rules/no-assigning-return-values.md)   | Prevent assigning return values of cy calls                     |
-| ✅  | [no-unnecessary-waiting](./docs/rules/no-unnecessary-waiting.md)           | Prevent waiting for arbitrary time periods                      |
-| ✅  | [no-async-tests](./docs/rules/no-async-tests.md)                           | Prevent using async/await in Cypress test case                  |
-| ✅  | [unsafe-to-chain-command](./docs/rules/unsafe-to-chain-command.md)         | Prevent chaining from unsafe to chain commands                  |
-|     | [no-force](./docs/rules/no-force.md)                                       | Disallow using `force: true` with action commands               |
-|     | [assertion-before-screenshot](./docs/rules/assertion-before-screenshot.md) | Ensure screenshots are preceded by an assertion                 |
-|     | [require-data-selectors](./docs/rules/require-data-selectors.md)           | Only allow data-\* attribute selectors (require-data-selectors) |
-|     | [no-pause](./docs/rules/no-pause.md)           | Disallow `cy.pause()` parent command |
+<!-- begin auto-generated rules list -->
+<!-- end auto-generated rules list -->
 
 ## Mocha and Chai
 
