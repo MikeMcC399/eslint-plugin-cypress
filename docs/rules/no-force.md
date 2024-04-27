@@ -1,3 +1,6 @@
+# Disallow using `force: true` with action commands (`cypress/no-force`)
+
+<!-- end auto-generated rule header -->
 Using `force: true` on inputs appears to be confusing rather than helpful.
 It usually silences the actual problem instead of providing a way to overcome it.
 See [Cypress Core Concepts](https://docs.cypress.io/guides/core-concepts/interacting-with-elements.html#Forcing).

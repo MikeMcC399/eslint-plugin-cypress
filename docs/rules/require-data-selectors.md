@@ -1,3 +1,6 @@
+# Require `data-*` attribute selectors (`cypress/require-data-selectors`)
+
+<!-- end auto-generated rule header -->
 Only allow `cy.get` to use selectors that target `data-*` attributes
 
 > Note: If you use this rule, consider only using the `warn` error level, since using `data-*` attribute selectors may not always be possible.

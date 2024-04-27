@@ -1,3 +1,6 @@
+# Require screenshots to be preceded by an assertion (`cypress/assertion-before-screenshot`)
+
+<!-- end auto-generated rule header -->
 If you take screenshots without assertions then you may get different screenshots depending on timing.
 
 For example, if clicking a button makes some network calls and upon success, renders something, then the screenshot may sometimes have the new render and sometimes not.

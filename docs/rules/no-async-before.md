@@ -1,3 +1,6 @@
+# Disallow using `async`/`await` in Cypress `before` methods (`cypress/no-async-before`)
+
+<!-- end auto-generated rule header -->
 Cypress commands that return a promise may cause side effects in `before`/`beforeEach` hooks, possibly causing unexpected behavior.
 
 ## Rule Details
