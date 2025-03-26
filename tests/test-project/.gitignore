@@ -1,0 +1,6 @@
+cypress/downloads/
+cypress/screenshots/
+cypress/videos/
+
+cypress/fixtures/profile.json
+cypress/fixtures/users.json
