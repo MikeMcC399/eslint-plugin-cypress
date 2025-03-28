@@ -7,6 +7,7 @@ export default [
   pluginJs.configs.recommended,
   eslintPlugin.configs['flat/recommended'],
   mochaPlugin.configs.flat.recommended,
+  {ignores: ['tests/test-project/']},
   {
     languageOptions: {
       globals: globals.node
