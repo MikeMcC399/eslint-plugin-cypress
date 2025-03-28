@@ -51,7 +51,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: build
-          path: ./tests/test-project
+          path: ./test-project
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -59,16 +59,16 @@ jobs:
       - name: npm install
         run: |
           npm install ./eslint-plugin-cypress-${{ needs.build.outputs.version }}.tgz -D
-        working-directory: ./tests/test-project
+        working-directory: ./test-project
       - name: linting
         if: ${{ ! startsWith(matrix.config, 'legacy/') }}
         run: |
           npx eslint --config ./eslint-configs/eslint.${{ matrix.config }}.mjs
-        working-directory: ./tests/test-project
+        working-directory: ./test-project
       - name: linting-legacy
         if: ${{ startsWith(matrix.config, 'legacy/') }}
         env:
           ESLINT_USE_FLAT_CONFIG: false
         run: |
           npx eslint --config ./eslint-configs/${{ matrix.config }}.json .
-        working-directory: ./tests/test-project
+        working-directory: ./test-project
