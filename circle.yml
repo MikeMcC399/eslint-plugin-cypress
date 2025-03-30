@@ -1,125 +1,89 @@
 version: 2.1
 
-workflows:
-  version: 2.1
-  main:
-    jobs:
-      - lint
-      - test-v8
-      - test-v9
-      - build-test-project:
-          requires:
-            - lint
-            - test-v9
-      - test-test-project:
-          requires:
-            - build-test-project
-      - release:
-          requires:
-            - lint
-            - test-v8
-            - test-v9
-          filters:
-            branches:
-              only:
-                - master
+executors:
+  docker-executor:
+    docker:
+      - image: cimg/node:22.14.0
 
 jobs:
-  lint:
-    docker:
-      - image: cimg/node:22.11.0
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm ci
-      - run:
-          name: Show ESLint version
-          command: npx eslint --version
-      - run:
-          name: Lint code
-          command: npm run lint
-
-  test-v8:
-    docker:
-      - image: cimg/node:22.11.0
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm ci
-      - run:
-          name: Install ESLint 8
-          command: npm install eslint@8
-      - run:
-          name: Show ESLint version
-          command: npx eslint --version
-      - run:
-          name: Test ESLint 8
-          command: npm run test:legacy
-
-  test-v9:
-    docker:
-      - image: cimg/node:22.11.0
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm ci
-      - run:
-          name: Install ESLint 9
-          command: npm install eslint@9
-      - run:
-          name: Show ESLint version
-          command: npx eslint --version
-      - run:
-          name: Test ESLint 9
-          command: npm test
-
   build-test-project:
-    docker:
-      - image: cimg/node:22.11.0
+    executors: docker-executor
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: npm ci
       - run:
-          name: Install ESLint 9
-          command: npm install eslint@9
+          name: Build tarball
+          command: npm pack
       - run:
-          name: Show ESLint version
-          command: npx eslint --version
-      - run:
-          name: Test ESLint 9
-          command: npm test
-          
-  test-test-project:
-    docker:
-      - image: cimg/node:22.11.0
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm ci
-      - run:
-          name: Install ESLint 9
-          command: npm install eslint@9
-      - run:
-          name: Show ESLint version
-          command: npx eslint --version
-      - run:
-          name: Test ESLint 9
-          command: npm test
+          name: Get version
+          command: |
+            echo "version=$(jq -r '.version' package.json)" >> $BASH_ENV
+            cp $BASH_ENV .env
+      - persist_to_workspace:
+          root: .
+          paths:
+            - eslint-plugin-cypress-*.tgz
+            - .env
 
-  release:
-    docker:
-      - image: cimg/node:22.11.0
+  test-test-project:
+    executors: docker-executor
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: npm ci
-      - run:
-          name: Run semantic release
-          command: npm run semantic-release
+
+
+workflows:
+  build-project:
+    jobs:
+      - build-test-project:
+  test-project:
+    jobs:
+      - test-test-project:
+          requires:
+            - build-project
+
+  # lint:
+  #   name: Install and lint
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       config: [
+  #         # non-legacy configurations correspond to examples in README
+  #         default,
+  #         recommended,
+  #         globals,
+  #         # legacy configuration are adapted from README examples
+  #         legacy/.eslintrc.custom,
+  #         legacy/.eslintrc.recommended,
+  #         ]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: build
+  #         path: ./test-project
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: "lts/*"
+  #     - name: npm install
+  #       run: |
+  #         npm install ./eslint-plugin-cypress-${{ needs.build.outputs.version }}.tgz -D
+  #       working-directory: ./test-project
+  #     - name: linting
+  #       if: ${{ ! startsWith(matrix.config, 'legacy/') }}
+  #       run: |
+  #         npx eslint --config ./eslint-configs/eslint.${{ matrix.config }}.mjs
+  #       working-directory: ./test-project
+  #     - name: linting-legacy
+  #       if: ${{ startsWith(matrix.config, 'legacy/') }}
+  #       env:
+  #         ESLINT_USE_FLAT_CONFIG: false
+  #       run: |
+  #         npx eslint --config ./eslint-configs/${{ matrix.config }}.json .
+  #       working-directory: ./test-project
