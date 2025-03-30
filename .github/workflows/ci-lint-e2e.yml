@@ -58,7 +58,7 @@ jobs:
           node-version: "lts/*"
       - name: npm install
         run: |
-          npm install ./eslint-plugin-cypress-${{ needs.build.outputs.version }}.tgz -D
+          npm install eslint@9 ./eslint-plugin-cypress-${{ needs.build.outputs.version }}.tgz -D
         working-directory: ./test-project
       - name: linting
         if: ${{ ! startsWith(matrix.config, 'legacy/') }}
