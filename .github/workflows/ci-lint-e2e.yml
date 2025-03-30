@@ -1,0 +1,74 @@
+name: CI lint E2E
+# This workflow creates a tarball from repo sources
+# It then checks that eslint is able to run successfully with different configurations
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build tarball
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - run: npm ci
+      - run: npm pack
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: eslint-plugin-cypress-*.tgz
+          retention-days: 1
+      - name: Get version
+        id: get_version
+        run: echo "version=$(jq -r '.version' package.json)" >> "$GITHUB_OUTPUT"
+  lint:
+    name: Install and lint
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: [
+          # non-legacy configurations correspond to examples in README
+          default,
+          recommended,
+          globals,
+          # legacy configuration are adapted from README examples
+          legacy/.eslintrc.custom,
+          legacy/.eslintrc.recommended,
+          ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./test-project
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+      - name: npm install
+        run: |
+          npm install ./eslint-plugin-cypress-${{ needs.build.outputs.version }}.tgz -D
+        working-directory: ./test-project
+      - name: linting
+        if: ${{ ! startsWith(matrix.config, 'legacy/') }}
+        run: |
+          npx eslint --config ./eslint-configs/eslint.${{ matrix.config }}.mjs
+        working-directory: ./test-project
+      - name: linting-legacy
+        if: ${{ startsWith(matrix.config, 'legacy/') }}
+        env:
+          ESLINT_USE_FLAT_CONFIG: false
+        run: |
+          npx eslint --config ./eslint-configs/${{ matrix.config }}.json .
+        working-directory: ./test-project
