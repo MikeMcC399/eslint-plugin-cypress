@@ -60,6 +60,7 @@ jobs:
         run: |
           npm install eslint@9 ./eslint-plugin-cypress-${{ needs.build.outputs.version }}.tgz -D
         working-directory: ./test-project
+      - run: npx eslint --version
       - name: linting
         if: ${{ ! startsWith(matrix.config, 'legacy/') }}
         run: |
