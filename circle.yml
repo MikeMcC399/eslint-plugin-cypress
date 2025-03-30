@@ -4,6 +4,7 @@ executors:
   docker-executor:
     docker:
       - image: cimg/node:22.14.0
+    resource_class: medium
 
 jobs:
   build-test-project:
@@ -19,22 +20,33 @@ jobs:
       - run:
           name: Get version
           command: |
-            echo "version=$(jq -r '.version' package.json)" >> $BASH_ENV
-            cp $BASH_ENV .env
+            echo "PLUGIN_VERSION=$(jq -r '.version' package.json)" >> $BASH_ENV
+            cp $BASH_ENV bash.env
       - persist_to_workspace:
           root: .
           paths:
             - eslint-plugin-cypress-*.tgz
-            - .env
+            - bash.env
 
   test-test-project:
     executors: docker-executor
+    working-directory: ./test-project
     steps:
       - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Get plugin version
+          command: |
+            cat bash.env >> $BASH_ENV
       - run:
           name: Install dependencies
-          command: npm ci
-
+          command: |
+            npm install ./eslint-plugin-cypress-$PLUGIN_VERSION.tgz -D
+      - run:
+          name: lint with example
+          command: |
+            npx eslint --config ./eslint-configs/eslint.default.mjs .
 
 workflows:
   build-project:
@@ -46,11 +58,7 @@ workflows:
           requires:
             - build-project
 
-  # lint:
-  #   name: Install and lint
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   strategy:
+
   #     matrix:
   #       config: [
   #         # non-legacy configurations correspond to examples in README
