@@ -1,4 +1,6 @@
-# Disallow chain of `cy.get()` calls (`cypress/no-chained-get`)
+# cypress/no-chained-get
+
+📝 Disallow chain of `cy.get()` calls.
 
 <!-- end auto-generated rule header -->
 This rule disallows the usage of chained `.get()` calls as `cy.get()` always starts its search from the cy.root element.

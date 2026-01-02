@@ -1,4 +1,6 @@
-# Require screenshots to be preceded by an assertion (`cypress/assertion-before-screenshot`)
+# cypress/assertion-before-screenshot
+
+📝 Require screenshots to be preceded by an assertion.
 
 <!-- end auto-generated rule header -->
 If you take screenshots without assertions then you may get different screenshots depending on timing.

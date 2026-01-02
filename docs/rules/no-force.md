@@ -1,4 +1,6 @@
-# Disallow using `force: true` with action commands (`cypress/no-force`)
+# cypress/no-force
+
+📝 Disallow using `force: true` with action commands.
 
 <!-- end auto-generated rule header -->
 Using `force: true` on inputs appears to be confusing rather than helpful.

@@ -1,6 +1,8 @@
-# Disallow using `async`/`await` in Cypress test cases (`cypress/no-async-tests`)
+# cypress/no-async-tests
 
 💼 This rule is enabled in the ✅ `recommended` config.
+
+📝 Disallow using `async`/`await` in Cypress test cases.
 
 <!-- end auto-generated rule header -->
 Cypress tests [that return a promise will error](https://docs.cypress.io/guides/references/error-messages.html#Cypress-detected-that-you-returned-a-promise-from-a-command-while-also-invoking-one-or-more-cy-commands-in-that-promise) and cannot run successfully.

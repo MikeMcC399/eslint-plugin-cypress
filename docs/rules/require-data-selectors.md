@@ -1,4 +1,6 @@
-# Require `data-*` attribute selectors (`cypress/require-data-selectors`)
+# cypress/require-data-selectors
+
+📝 Require `data-*` attribute selectors.
 
 <!-- end auto-generated rule header -->
 Require `cy.get` to use only selectors that target `data-*` attributes.
