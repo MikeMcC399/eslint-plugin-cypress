@@ -1,0 +1,27 @@
+name: ci vitest
+on:
+  workflow_dispatch:
+
+jobs:
+  plugin-test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        eslint-version: [9]
+    name: Plugin test eslint v${{ matrix.eslint-version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.node-version'
+      - run: node -v
+      - run: npm -v
+      - name: Install dependencies
+        run: npm ci
+      - name: Install specific eslint version
+        run: npm install eslint@${{ matrix.eslint-version }}
+      - name: Test (vitest)
+        run: npm test
