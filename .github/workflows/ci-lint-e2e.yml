@@ -1,0 +1,54 @@
+name: CI lint E2E
+# This workflow creates a tarball from repo sources
+# It then checks that eslint is able to run successfully with different configurations
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build tarball
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+      - run: npm ci
+      - run: npm pack
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: eslint-plugin-cypress-*.tgz
+          retention-days: 1
+      - name: Get version
+        id: get_version
+        run: echo "version=$(jq -r '.version' package.json)" >> "$GITHUB_OUTPUT"
+  npm-install:
+    name: Install
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
+        with:
+          name: build
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+      - name: npm install
+        run: |
+          npm install eslint@9 ../eslint-plugin-cypress-${{ needs.build.outputs.version }}.tgz -D
+        working-directory: ./test-project
+      - name: linting
+        run: |
+          npx eslint -c ./eslint-configs/eslint.recommended.mjs
+        working-directory: ./test-project
